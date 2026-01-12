@@ -1,0 +1,7 @@
+{
+  "name": "Bankai AI",
+  "description": "A niche, AI-powered toolkit featuring a video clipper for short-form content and a screenshot text editor with font-matching capabilities.",
+  "requestFramePermissions": [
+    "camera"
+  ]
+}
