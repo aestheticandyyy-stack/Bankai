@@ -2,13 +2,29 @@
 import { GoogleGenAI, Type } from "@google/genai";
 import { VideoClip, TimedWord } from "../types";
 
-const ai = new GoogleGenAI({ apiKey: process.env.API_KEY || '' });
+// Safe API Key retrieval with fallback for process-less environments
+const getApiKey = () => {
+  try {
+    return typeof process !== 'undefined' && process.env ? process.env.API_KEY : null;
+  } catch (e) {
+    return null;
+  }
+};
+
+// Deferred initialization function
+const getAI = () => {
+  const apiKey = getApiKey();
+  if (!apiKey) {
+    console.warn("Bankai: API_KEY not found in environment. AI features may not respond.");
+  }
+  return new GoogleGenAI({ apiKey: apiKey || '' });
+};
 
 /**
  * Analyzes a set of video frames to identify viral segments.
- * This is "Real Analysis" using multimodal input.
  */
 export async function analyzeRealVideoFrames(frameBase64s: string[]): Promise<VideoClip[]> {
+  const ai = getAI();
   const imageParts = frameBase64s.map(data => ({
     inlineData: {
       data: data.split(',')[1],
@@ -21,7 +37,7 @@ export async function analyzeRealVideoFrames(frameBase64s: string[]): Promise<Vi
     contents: {
       parts: [
         ...imageParts,
-        { text: "These are frames from a video file. Analyze the visual flow and identifying 3 high-impact 'hooks' or 'viral moments'. Provide the approximate start/end times in seconds (assuming the frames represent a 30-60s clip). Return as JSON." }
+        { text: "These are frames extracted from a video. Perform a deep analysis of the visual flow, hooks, and high-energy segments. Identify exactly 3 potential viral moments. For each, provide a start and end time in seconds (estimate based on the frame sequence), a catchy description, and a 'viral score' from 0-100. Return ONLY a JSON array." }
       ]
     },
     config: {
@@ -46,15 +62,16 @@ export async function analyzeRealVideoFrames(frameBase64s: string[]): Promise<Vi
   try {
     return JSON.parse(response.text || '[]');
   } catch (e) {
-    console.error("Analysis failed", e);
+    console.error("Deep analysis failed to parse", e);
     return [];
   }
 }
 
 export async function generateTimedCaptionsForClip(description: string, duration: number): Promise<TimedWord[]> {
+  const ai = getAI();
   const response = await ai.models.generateContent({
     model: 'gemini-3-flash-preview',
-    contents: `Generate a word-by-word transcript for a ${duration}s viral clip described as: "${description}". The speaker is high energy. Return as JSON array of {word, start, end} where start and end are within 0 to ${duration} seconds.`,
+    contents: `Generate a dynamic, word-by-word transcript for a ${duration} second video clip described as: "${description}". The captions should be high-impact. Return as a JSON array of objects with {word, start, end} where start and end are timestamps in seconds relative to the clip start (0.0 to ${duration}.0).`,
     config: {
       responseMimeType: "application/json",
       responseSchema: {
@@ -75,18 +92,19 @@ export async function generateTimedCaptionsForClip(description: string, duration
   try {
     return JSON.parse(response.text || '[]');
   } catch (e) {
-    console.error("Captions failed", e);
+    console.error("Caption generation failed", e);
     return [];
   }
 }
 
 export async function editScreenshotText(base64Image: string, prompt: string): Promise<string | null> {
+  const ai = getAI();
   const response = await ai.models.generateContent({
     model: 'gemini-2.5-flash-image',
     contents: {
       parts: [
         { inlineData: { data: base64Image.split(',')[1], mimeType: 'image/png' } },
-        { text: `Identify text and edit: ${prompt}. Match font/style exactly.` }
+        { text: `Identify the text areas in this screenshot and perform the following modification: ${prompt}. You must maintain the exact font family, weight, size, and background texture of the original image for a perfect 'ghost' edit.` }
       ]
     }
   });

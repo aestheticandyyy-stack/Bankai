@@ -3,7 +3,7 @@
   "name": "Bankai AI Toolkit",
   "short_name": "Bankai",
   "description": "High-performance AI tools for video clipping, downloading, and screenshot editing.",
-  "start_url": "/",
+  "start_url": "./",
   "display": "standalone",
   "background_color": "#050505",
   "theme_color": "#050505",

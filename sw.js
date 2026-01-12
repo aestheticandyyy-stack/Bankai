@@ -1,9 +1,9 @@
 
-const CACHE_NAME = 'bankai-v1';
+const CACHE_NAME = 'bankai-v1.1';
 const ASSETS = [
-  '/',
-  '/index.html',
-  '/manifest.json',
+  './',
+  './index.html',
+  './manifest.json',
   'https://cdn.tailwindcss.com',
   'https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Space+Grotesk:wght@300;500;700&display=swap'
 ];
@@ -11,7 +11,9 @@ const ASSETS = [
 self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
-      return cache.addAll(ASSETS);
+      return cache.addAll(ASSETS).catch(err => {
+        console.warn('Some assets failed to cache during install:', err);
+      });
     })
   );
 });

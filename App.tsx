@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { ToolType } from './types';
 import { Icons } from './constants';
 import Clipper from './components/Clipper';
@@ -8,20 +8,13 @@ import Downloader from './components/Downloader';
 
 const App: React.FC = () => {
   const [activeTool, setActiveTool] = useState<ToolType>(ToolType.NONE);
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  if (!mounted) return null;
 
   const renderHome = () => (
     <div className="min-h-[80vh] flex flex-col items-center justify-center p-6 text-center space-y-16">
       <div className="space-y-4 animate-in fade-in zoom-in duration-1000">
         <h1 className="text-[12vw] font-bankai font-extrabold leading-none tracking-tighter uppercase relative select-none">
           <span className="text-multi-color">Bankai</span>
-          <span className="absolute -top-4 -right-8 text-xs bg-white text-black px-2 py-1 rounded font-bold tracking-widest shadow-lg shadow-white/5">v3.0</span>
+          <span className="absolute -top-4 -right-8 text-xs bg-white text-black px-2 py-1 rounded font-bold tracking-widest shadow-lg shadow-white/5">v3.1</span>
         </h1>
         <p className="text-zinc-500 text-xl max-w-2xl mx-auto font-light">
           Forging the next generation of creative AI instruments. <br/>Precision editing. Viral creation. No limits.
@@ -72,9 +65,9 @@ const App: React.FC = () => {
           <span className="text-multi-color">BANKAI</span>
         </div>
         <div className="flex gap-4">
-          <button onClick={() => setActiveTool(ToolType.CLIPPER)} className={`text-xs font-bold uppercase tracking-widest ${activeTool === ToolType.CLIPPER ? 'text-white' : 'text-zinc-500'}`}>Clipper</button>
-          <button onClick={() => setActiveTool(ToolType.DOWNLOAD)} className={`text-xs font-bold uppercase tracking-widest ${activeTool === ToolType.DOWNLOAD ? 'text-white' : 'text-zinc-500'}`}>Download</button>
-          <button onClick={() => setActiveTool(ToolType.SCREENSHOT)} className={`text-xs font-bold uppercase tracking-widest ${activeTool === ToolType.SCREENSHOT ? 'text-white' : 'text-zinc-500'}`}>Edit</button>
+          <button onClick={() => setActiveTool(ToolType.CLIPPER)} className={`text-xs font-bold uppercase tracking-widest transition-colors ${activeTool === ToolType.CLIPPER ? 'text-white' : 'text-zinc-500 hover:text-zinc-300'}`}>Clipper</button>
+          <button onClick={() => setActiveTool(ToolType.DOWNLOAD)} className={`text-xs font-bold uppercase tracking-widest transition-colors ${activeTool === ToolType.DOWNLOAD ? 'text-white' : 'text-zinc-500 hover:text-zinc-300'}`}>Download</button>
+          <button onClick={() => setActiveTool(ToolType.SCREENSHOT)} className={`text-xs font-bold uppercase tracking-widest transition-colors ${activeTool === ToolType.SCREENSHOT ? 'text-white' : 'text-zinc-500 hover:text-zinc-300'}`}>Edit</button>
         </div>
       </nav>
 
@@ -86,7 +79,7 @@ const App: React.FC = () => {
       </main>
 
       {activeTool !== ToolType.NONE && (
-        <button onClick={() => setActiveTool(ToolType.NONE)} className="fixed bottom-10 left-10 p-4 rounded-full glass border border-white/10 hover:bg-white/5 transition-all z-50">
+        <button onClick={() => setActiveTool(ToolType.NONE)} className="fixed bottom-10 left-10 p-4 rounded-full glass border border-white/10 hover:bg-white/5 transition-all z-50 shadow-2xl">
           <Icons.Back />
         </button>
       )}
